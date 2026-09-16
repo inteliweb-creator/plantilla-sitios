@@ -1,0 +1,1475 @@
+
+/* ============================================================
+   SISTEMA DE DISEÑO BASE
+   Claro, premium y minimalista, sobre una paleta fría de
+   atardecer: cielo azul, periwinkle y lavanda, con un índigo
+   profundo como único acento.
+
+   El naranja anterior se retiró a propósito: pertenece a la
+   marca previa del fundador, que opera en otro sector, y dos
+   sitios con el mismo acento se leen como el mismo sitio.
+
+   El "futurismo" no viene del color sino de la forma: retículas
+   de un píxel, etiquetas monoespaciadas, vidrio esmerilado,
+   degradados muy diluidos y movimiento con resorte.
+
+   La cursiva serif sobrevive del lenguaje editorial anterior,
+   pero ahora solo en la palabra destacada de cada titular: es
+   la firma de marca dentro de una tipografía de producto.
+   ============================================================ */
+
+@theme {
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Superficies claras — la base del sitio.
+     El lienzo tiene un punto de azul: sobre él, el blanco puro de
+     las tarjetas se lee como material, no como "nada". */
+  --color-canvas: #F6F8FC;      /* fondo general, blanco frío */
+  --color-surface: #FFFFFF;     /* tarjetas y paneles */
+  --color-surface-2: #EEF2F9;   /* franjas alternas */
+  --color-surface-3: #E2E8F4;   /* relieves y estados */
+
+  /* Superficies oscuras — contraste editorial puntual y panel
+     de administración. Azul muy oscuro, no negro neutro: tiene
+     que sentirse la misma familia que el resto. */
+  --color-void: #0D1024;
+  --color-ink: #141833;
+  --color-ink-soft: #1E2444;
+
+  /* Texto */
+  --color-graphite: #14182F;    /* titulares */
+  --color-slate: #4C5470;       /* cuerpo */
+  --color-ink-muted: #656D8A;   /* secundario — 4.6:1 incluso sobre surface-2 */
+  --color-cream: #F1F3FA;       /* texto sobre oscuro */
+  --color-cream-muted: #99A2BE; /* secundario sobre oscuro */
+  --color-ivory: #FFFFFF;
+  --color-ivory-soft: #F6F8FC;
+  --color-ivory-dim: #E2E8F4;
+
+  /* Acento: uno solo, y escaso. El índigo profundo de la
+     referencia — el color del disco de marca. Se usa en CTA,
+     foco y la palabra destacada de cada titular. Nada más. */
+  --color-accent: #2E2D8F;
+  --color-accent-soft: #4442C4;
+  --color-accent-tint: #EDEDFA;
+
+  /* Tintes de atardecer. NO son colores de texto ni de botón:
+     solo alimentan degradados, auroras y fondos de tarjeta. */
+  --color-sky: #A9C8EA;
+  --color-periwinkle: #C2C7EF;
+  --color-lavender: #DCD9F1;
+  --color-blush: #F1DBCE;
+  --color-signal: #2E2D8F;
+  --color-signal-tint: #EDEDFA;
+  --color-violet: #6C63D8;
+  --color-sage: #7E9AA6;
+
+  /* Líneas: un píxel, casi imperceptible. */
+  --color-line: #E1E7F2;
+  --color-line-strong: #CBD5E8;
+
+  /* Radios amplios: la referencia es toda cápsula y esquina
+     blanda. El panel llega a 40px porque enmarca el hero entero. */
+  --radius-panel: 40px;
+  --radius-card: 22px;
+  --radius-tile: 14px;
+
+  /* Sombras de producto: difusas, nunca duras. */
+  --shadow-soft: 0 1px 2px rgb(20 24 47 / 0.04), 0 8px 24px -12px rgb(20 24 47 / 0.10);
+  --shadow-lift: 0 1px 2px rgb(20 24 47 / 0.05), 0 24px 60px -28px rgb(20 24 47 / 0.20);
+  --shadow-float: 0 2px 4px rgb(20 24 47 / 0.04), 0 40px 80px -32px rgb(20 24 47 / 0.28);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-slate);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-wrap: pretty;
+    /*
+      `clip` y no `hidden`.
+
+      `overflow-x: hidden` en el body lo convierte en contenedor de scroll, y
+      eso rompe `position: sticky` en todos sus descendientes: el encabezado
+      fijo de Servicios y la columna del cotizador ya estaban afectados.
+      `clip` recorta igual el desbordamiento horizontal pero no crea contexto
+      de scroll. La línea de `hidden` queda encima como respaldo para los
+      navegadores que aún no entienden `clip`.
+    */
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
+  /* Titulares de producto: sans apretada y densa. El carácter
+     editorial entra solo por el <em> serif en cursiva. */
+  h1, h2, h3 {
+    color: var(--color-graphite);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  h1 em, h2 em, h3 em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ============================================================
+   PIEL TÉCNICA — data-tema="tech"
+
+   Grafito premium, nunca negro: el negro puro aplana y delata el
+   degradado; estos grises conservan la profundidad de las
+   referencias. La escala va de #212429 a #454C56, con los
+   filos un punto más claros para que los cantos se lean.
+
+   El truco de fondo: NO se reescribe ningún componente. Se
+   redefinen los mismos tokens semánticos que ya usan, de modo
+   que `bg-surface`, `text-graphite` o `border-line` cambian de
+   valor solos. Por eso `--color-graphite` —que nombra "el color
+   del titular"— pasa a ser casi blanco: el nombre describe el
+   papel, no el tono. Quitar el atributo del body devuelve el
+   sitio claro entero.
+
+   Lo que NO se invierte son las piezas de cromo: `glass`,
+   `glass-pill` y el riel siguen siendo blancos. En la referencia
+   del hero las tarjetas flotantes son blancas sobre la carcasa
+   oscura, y ese contraste es justo el efecto que se busca.
+   ============================================================ */
+
+[data-tema='tech'] {
+  --color-canvas: #212429;
+  --color-surface: #2A2E35;
+  --color-surface-2: #31363E;
+  --color-surface-3: #3B4149;
+
+  --color-graphite: #F3F5F8;   /* titulares */
+  --color-slate: #B4BCC7;      /* cuerpo */
+  --color-ink-muted: #99A3B1;  /* secundario — 4.5:1 incluso sobre surface-2 */
+
+  --color-line: #3A4048;
+  --color-line-strong: #4A515B;
+
+  /* El índigo de marca da 2:1 sobre este grafito. Se usa su
+     variante clara, la misma regla que ya aplica el tema oscuro. */
+  --color-accent: #9B98F7;
+  --color-accent-soft: #B5B2FF;
+  --color-accent-tint: #2E3140;
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.35), 0 8px 24px -12px rgb(0 0 0 / 0.55);
+  --shadow-lift: 0 1px 2px rgb(0 0 0 / 0.4), 0 24px 60px -28px rgb(0 0 0 / 0.7);
+  --shadow-float: 0 2px 4px rgb(0 0 0 / 0.4), 0 40px 80px -32px rgb(0 0 0 / 0.75);
+}
+
+@layer components {
+  /*
+    Islas de luz dentro de la piel oscura.
+
+    El cromo —vidrio, píldoras, orbes— sigue siendo blanco a propósito: en la
+    referencia las tarjetas flotantes son blancas sobre la carcasa grafito, y
+    ese contraste es el efecto. Pero su contenido usa `text-graphite`, que en
+    esta piel resuelve a casi blanco: blanco sobre blanco.
+
+    En vez de reescribir cada hijo, se vuelven a declarar los tokens DENTRO
+    del material. Como `text-graphite` compila a `color: var(--color-graphite)`,
+    cualquier descendiente —presente o futuro— resuelve al valor correcto sin
+    tocar una sola clase.
+  */
+  [data-tema='tech'] .glass,
+  [data-tema='tech'] .glass-pill,
+  [data-tema='tech'] .glass-orb,
+  [data-tema='tech'] .isla-clara {
+    --color-graphite: #1B1F26;
+    --color-slate: #4A5261;
+    --color-ink-muted: #6B7482;
+    --color-line: #DDE3EC;
+    --color-line-strong: #C6CEDA;
+    --color-accent: #2E2D8F;
+    --color-surface: #FFFFFF;
+    --color-surface-2: #EEF2F9;
+    --color-surface-3: #E2E8F4;
+    color: #4A5261;
+  }
+
+  /*
+    El riel, en la piel técnica, es la cápsula blanca de la referencia.
+
+    Sobre grafito, los círculos de vidrio translúcido se perdían. Aquí van
+    blancos y sólidos, con la tinta oscura, que es exactamente cómo se ve en
+    la imagen: una pastilla clara pegada al canto izquierdo de la carcasa.
+  */
+  [data-tema='tech'] .rail-btn {
+    border-color: transparent;
+    background: transparent;
+    color: #5A6270;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  [data-tema='tech'] .rail-btn:hover { background: rgb(0 0 0 / 0.06); color: #1B1F26; }
+  [data-tema='tech'] .rail-btn[aria-current='page'] {
+    background: #1B1F26;
+    color: #FFFFFF;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  /*
+    La cápsula sube su opacidad de reposo en esta piel.
+
+    El grupo entero vive al 55% para no estorbar, pero blanco al 55% sobre
+    grafito da un gris sucio en vez de la pastilla clara de la referencia. Al
+    80% se lee como blanco y sigue sin competir con el titular.
+  */
+  [data-tema='tech'] .rail-capsula {
+    background: #FFFFFF;
+    border-radius: 999px;
+    padding: 0.5rem;
+    box-shadow: var(--shadow-lift);
+  }
+
+  /* Sobre grafito el acento claro necesita tinta oscura encima. */
+  [data-tema='tech'] .btn-accent {
+    color: #191C22;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 14px 28px -14px rgb(155 152 247 / 0.5);
+  }
+
+  /* La retícula pasa a trazo claro: en oscuro, líneas negras no existen. */
+  [data-tema='tech'] .grid-tech {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.055) 1px, transparent 1px);
+  }
+  [data-tema='tech'] .dots-tech {
+    background-image: radial-gradient(rgb(255 255 255 / 0.10) 1px, transparent 1px);
+  }
+
+  /* Auroras: mucho más contenidas, o el grafito se lava. */
+  [data-tema='tech'] .aura { opacity: 0.22; }
+  [data-tema='tech'] .aura-warm { background: radial-gradient(circle, #6E5B4E 0%, transparent 70%); }
+  [data-tema='tech'] .aura-sky { background: radial-gradient(circle, #46586E 0%, transparent 70%); }
+  [data-tema='tech'] .aura-periwinkle { background: radial-gradient(circle, #56528C 0%, transparent 70%); }
+
+  /* Mallas de tarjeta en versión grafito. */
+  [data-tema='tech'] .mesh-sky {
+    background:
+      radial-gradient(120% 120% at 12% 8%, #333C47 0%, transparent 58%),
+      linear-gradient(155deg, #2A2F37 0%, #23262C 100%);
+  }
+  [data-tema='tech'] .mesh-periwinkle {
+    background:
+      radial-gradient(120% 120% at 15% 10%, #3A3752 0%, transparent 58%),
+      linear-gradient(155deg, #2C2A38 0%, #23252C 100%);
+  }
+  [data-tema='tech'] .mesh-dusk {
+    background:
+      radial-gradient(120% 120% at 18% 6%, #453B36 0%, transparent 55%),
+      linear-gradient(155deg, #302B2B 0%, #23252A 100%);
+  }
+  [data-tema='tech'] .mesh-mist {
+    background:
+      radial-gradient(120% 120% at 18% 10%, #35424A 0%, transparent 55%),
+      linear-gradient(155deg, #292F35 0%, #22252A 100%);
+  }
+  [data-tema='tech'] .mesh-ivory {
+    background: linear-gradient(155deg, #343941 0%, #262A30 100%);
+  }
+
+  /* El grano en oscuro suma en vez de restar. */
+  [data-tema='tech'] .grain::after {
+    mix-blend-mode: overlay;
+    opacity: 0.12;
+  }
+
+  /* ---------- FONDO TÉCNICO ----------
+     La segunda referencia: chapa grafito con biseles, tiras de
+     luz y marcas de taller. Se monta por capas para que ninguna
+     dependa de una imagen y todas escalen.
+
+     Va en un pseudo-elemento fijo detrás de todo, no en cada
+     sección: así el recorrido se siente como una sola pieza de
+     chapa y no como franjas cosidas. */
+  .fondo-tech {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      /* Bisel superior izquierdo */
+      linear-gradient(135deg, rgb(255 255 255 / 0.05) 0%, transparent 22%),
+      /* Chapa mayor, en diagonal como la referencia */
+      linear-gradient(115deg, #262A30 0%, #22252B 38%, #2B3037 39%, #262A31 62%, #1F2228 100%),
+      var(--color-canvas);
+  }
+
+  /* Tiras de luz: el único elemento brillante, y escasas. */
+  .tira-luz {
+    position: absolute;
+    border-radius: 999px;
+    background: linear-gradient(to bottom, transparent, #EDF1F6 18%, #EDF1F6 82%, transparent);
+    box-shadow: 0 0 24px 2px rgb(237 241 246 / 0.35);
+    opacity: 0.55;
+  }
+
+  /* Filo biselado: la línea clara que separa dos chapas. */
+  .filo {
+    position: absolute;
+    background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.18), transparent);
+    height: 1px;
+  }
+
+  /* Micro-tipografía de taller: códigos, referencias, marcas. */
+  .marca-tecnica {
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.40);
+  }
+
+  /* Perforaciones: la retícula de puntos troquelados. */
+  .troquel {
+    background-image: radial-gradient(rgb(255 255 255 / 0.16) 1px, transparent 1.5px);
+    background-size: 10px 10px;
+  }
+}
+
+/* ------------------------------------------------------------
+   MATERIALES
+   ------------------------------------------------------------ */
+
+/* Tarjeta base del sitio claro: blanco, línea de un píxel,
+   sombra difusa. Es el 90% de la interfaz. */
+@utility card {
+  position: relative;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Vidrio claro: para elementos flotantes sobre contenido. */
+@utility glass {
+  position: relative;
+  border-radius: var(--radius-card);
+  border: 1px solid rgb(255 255 255 / 0.85);
+  background: rgb(255 255 255 / 0.62);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  box-shadow: var(--shadow-float), inset 0 1px 0 rgb(255 255 255 / 0.6);
+}
+
+/* Vidrio sobre superficies oscuras (secciones de contraste). */
+@utility glass-dark {
+  position: relative;
+  border-radius: var(--radius-card);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.06);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10);
+}
+
+/* ------------------------------------------------------------
+   CANAL DEL RIEL IZQUIERDO
+
+   El riel ocupa los primeros 104px de la ventana a partir de `lg`.
+   La primera versión le reservaba ese ancho con un `padding-left`
+   en el body, y estaba mal: como cada sección pinta su propio
+   fondo, el relleno dejaba una franja del color del lienzo a la
+   izquierda de cada franja de color. La página se leía partida en
+   dos columnas y el riel parecía estar fuera de ella.
+
+   Lo correcto es que las secciones lleguen de canto a canto y que
+   solo su CONTENIDO se aparte. Eso hace `.pl-rail`, aplicada a los
+   contenedores de contenido. El riel queda entonces flotando sobre
+   el fondo de cada sección, dentro de la página, y las piezas que
+   sí deben cruzar a lo ancho —el carrusel de casos— pasan por
+   debajo del riel en vez de por debajo de una franja.
+
+   La clase va duplicada en el selector a propósito: eso le da
+   especificidad (0,2,0) y gana al `lg:px-*` de Tailwind que lleva
+   el mismo contenedor, sin recurrir a `!important`.
+   ------------------------------------------------------------ */
+@media (min-width: 1024px) {
+  .pl-rail.pl-rail {
+    /* 104px libra con holgura los iconos, que ocupan de 32 a 72: el riel mide
+       104 de ancho pero su materia visible es solo el círculo del centro.
+       Reservar los 104 completos descolocaba el contenido sin necesidad. */
+    padding-left: 6.5rem;
+    padding-right: 3rem;
+  }
+}
+
+/* ------------------------------------------------------------
+   SILUETAS RECORTADAS
+   Las tarjetas que flotan sobre el hero no son rectángulos: una
+   lleva un mordisco cóncavo abajo a la izquierda y la otra arriba
+   a la derecha, y cada mordisco acuna un botón circular. La
+   esquina opuesta abre un radio muy amplio, que es lo que hace
+   que la tarjeta parezca ensancharse por ahí.
+
+   El recorte se hace con `mask` y no con `clip-path: path()`
+   porque la máscara escala con el elemento. El contenido de estas
+   tarjetas se edita desde el panel, así que su alto cambia; una
+   ruta en píxeles quedaría desalineada en cuanto alguien escriba
+   una línea de más.
+
+   Ojo al usarlas: la máscara se come también la sombra exterior,
+   porque `box-shadow` se dibuja fuera del área que la máscara deja
+   pasar. La sombra tiene que ir en un envoltorio con
+   `filter: drop-shadow()`, que sigue el canal alfa y por tanto la
+   silueta ya recortada. Para eso está `.shape-shadow`.
+   ------------------------------------------------------------ */
+
+/*
+  El radio del mordisco NO se mide desde el vértice de la tarjeta sino desde el
+  CENTRO del botón que va a acunar, y vale su radio más el hueco que se quiere
+  ver alrededor. Medirlo desde el vértice —como en la primera versión— abría un
+  arco mucho más ancho que el botón y el botón quedaba suelto dentro de un
+  hueco que no le correspondía.
+
+  El centro va a 18px de cada canto: lo justo para que el vértice de la tarjeta
+  quede dentro del círculo recortado (dista 25.5px < 28) y no sobreviva como una
+  esquirla suelta en la esquina.
+*/
+@utility notch-bl {
+  --btn: 2.5rem;                                /* diámetro del botón */
+  --hueco: 0.5rem;                              /* aire uniforme alrededor */
+  --centro: 1.125rem;                           /* centro del botón, desde el canto */
+  --nr: calc(var(--btn) / 2 + var(--hueco));
+  border-bottom-left-radius: 0;
+  -webkit-mask-image: radial-gradient(circle var(--nr) at var(--centro) calc(100% - var(--centro)), transparent 98%, #000 100%);
+  mask-image: radial-gradient(circle var(--nr) at var(--centro) calc(100% - var(--centro)), transparent 98%, #000 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+}
+
+@utility notch-tr {
+  --btn: 2.5rem;
+  --hueco: 0.5rem;
+  --centro: 1.125rem;
+  --nr: calc(var(--btn) / 2 + var(--hueco));
+  border-top-right-radius: 0;
+  -webkit-mask-image: radial-gradient(circle var(--nr) at calc(100% - var(--centro)) var(--centro), transparent 98%, #000 100%);
+  mask-image: radial-gradient(circle var(--nr) at calc(100% - var(--centro)) var(--centro), transparent 98%, #000 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+}
+
+/* El botón que se acuna en el mordisco. */
+@utility notch-btn {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--btn, 2.5rem);
+  height: var(--btn, 2.5rem);
+  border-radius: 999px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s;
+}
+
+/* La sombra de una silueta recortada, en el envoltorio. */
+@utility shape-shadow {
+  filter: drop-shadow(0 2px 3px rgb(20 24 47 / 0.06))
+          drop-shadow(0 26px 34px rgb(20 24 47 / 0.20));
+}
+
+@utility glass-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-soft);
+}
+
+@utility glass-orb {
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+@utility text-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+@layer components {
+
+  /* --- Retícula técnica: el rasgo futurista principal. --------
+     Una malla de un píxel, casi invisible, que se desvanece
+     hacia los bordes. Da la sensación de plano técnico sin
+     ensuciar el blanco. */
+  .grid-tech {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(20 24 47 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(20 24 47 / 0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, #000 20%, transparent 80%);
+    mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, #000 20%, transparent 80%);
+  }
+
+  .grid-tech-dark {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.055) 1px, transparent 1px);
+  }
+
+  /* Puntos en vez de líneas, para bloques más pequeños. */
+  .dots-tech {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgb(20 24 47 / 0.10) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
+    mask-image: linear-gradient(to bottom, #000, transparent);
+  }
+
+  /* --- Auroras: color muy diluido, nunca saturado. ----------- */
+  .aura {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 999px;
+    filter: blur(80px);
+    opacity: 0.5;
+  }
+  .aura-warm { background: radial-gradient(circle, #F1DBCE 0%, transparent 70%); }
+  .aura-sky { background: radial-gradient(circle, #A9C8EA 0%, transparent 70%); }
+  .aura-periwinkle { background: radial-gradient(circle, #C2C7EF 0%, transparent 70%); }
+
+  /* --- Mallas de degradado -----------------------------------
+     Se conservan los nombres del sistema anterior porque los
+     datos editables (inicio.json) los referencian por nombre.
+     Ahora son versiones claras: tintes, no bloques de color. */
+  .mesh {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .mesh-sky {
+    background:
+      radial-gradient(120% 120% at 12% 8%, #CFE1F5 0%, transparent 58%),
+      radial-gradient(110% 110% at 88% 22%, #A9C8EA 0%, transparent 60%),
+      linear-gradient(155deg, #F2F7FD 0%, #FFFFFF 100%);
+  }
+  .mesh-periwinkle {
+    background:
+      radial-gradient(120% 120% at 15% 10%, #D6D9F5 0%, transparent 58%),
+      radial-gradient(110% 110% at 85% 25%, #C2C7EF 0%, transparent 60%),
+      linear-gradient(155deg, #F5F5FD 0%, #FFFFFF 100%);
+  }
+  .mesh-dusk {
+    background:
+      radial-gradient(120% 120% at 18% 6%, #CDDCF2 0%, transparent 55%),
+      radial-gradient(120% 120% at 84% 28%, #F1DBCE 0%, transparent 58%),
+      linear-gradient(155deg, #FAF6F4 0%, #FFFFFF 100%);
+  }
+  .mesh-mist {
+    background:
+      radial-gradient(120% 120% at 18% 10%, #DDE8EE 0%, transparent 55%),
+      radial-gradient(110% 110% at 84% 26%, #C9DCE4 0%, transparent 58%),
+      linear-gradient(155deg, #F4F9FB 0%, #FFFFFF 100%);
+  }
+  .mesh-ivory {
+    background:
+      radial-gradient(120% 120% at 15% 10%, #FFFFFF 0%, transparent 55%),
+      linear-gradient(155deg, #F1F5FC 0%, #FFFFFF 100%);
+  }
+
+  /* --- Cielo de atardecer -------------------------------------
+     El degradado del hero, sacado de la referencia: azul arriba,
+     lavanda en medio, un rubor cálido en el horizonte. Es el
+     único sitio donde el color ocupa toda una superficie. */
+  .sky-dusk {
+    background:
+      radial-gradient(80% 55% at 50% 100%, #F5E2D6 0%, transparent 62%),
+      radial-gradient(70% 60% at 82% 78%, #E6DCEE 0%, transparent 65%),
+      linear-gradient(178deg, #A6C6E6 0%, #C6D6EA 30%, #DFE0F0 58%, #F3E6E1 100%);
+  }
+
+  /* Grano: apenas perceptible, solo para matar el banding de
+     los degradados grandes. En claro debe ser mucho más suave
+     que en oscuro o se ve sucio. */
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* --- Botones ------------------------------------------------ */
+  .btn-accent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    box-shadow: 0 1px 2px rgb(20 24 47 / 0.12), 0 14px 28px -14px rgb(46 45 143 / 0.7);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, box-shadow 0.25s;
+  }
+  .btn-accent:hover {
+    background: var(--color-accent-soft);
+    transform: translateY(-2px);
+    box-shadow: 0 1px 2px rgb(20 24 47 / 0.12), 0 20px 36px -14px rgb(46 45 143 / 0.75);
+  }
+  .btn-accent:active { transform: translateY(0); }
+
+  /* Botón con degradado oficial de la tarjeta 2 de Casos y Situaciones Reales (mesh-dusk: #CDDCF2 a #F1DBCE) */
+  .btn-dusk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #CDDCF2 0%, #E8E2F2 45%, #F1DBCE 100%);
+    color: #14182F;
+    border: 1px solid rgba(205, 220, 242, 0.9);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(20, 24, 47, 0.08), 0 1px 2px rgba(20, 24, 47, 0.04);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s, background 0.2s;
+  }
+  .btn-dusk:hover {
+    background: linear-gradient(135deg, #BDD2EE 0%, #DFD7EE 45%, #ECCDC2 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(20, 24, 47, 0.14), 0 2px 4px rgba(20, 24, 47, 0.06);
+  }
+  .btn-dusk:active { transform: translateY(0); }
+
+  /* Secundario sobre claro: borde de un píxel, sin relleno. */
+  .btn-ghost-ink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-surface);
+    color: var(--color-graphite);
+    font-weight: 500;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-ghost-ink:hover {
+    border-color: var(--color-graphite);
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-1px);
+  }
+
+  /* Secundario sobre oscuro. */
+  .btn-ghost-cream {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid rgb(244 244 241 / 0.25);
+    color: var(--color-cream);
+    font-weight: 500;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  .btn-ghost-cream:hover {
+    background: rgb(244 244 241 / 0.08);
+    border-color: rgb(244 244 241 / 0.5);
+  }
+
+  /* Botón circular del riel lateral y de los controles flotantes.
+     Vidrio esmerilado sobre el cielo; se rellena de blanco al
+     estar activo, como en la referencia. */
+  .rail-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    /* El borde va en el color de línea y no en blanco: el riel vive tanto
+       sobre el cielo del hero como sobre las secciones blancas, y un borde
+       blanco desaparece en la mitad del recorrido. */
+    border: 1px solid var(--color-line);
+    background: rgb(255 255 255 / 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: var(--color-slate);
+    transition: background-color 0.2s, color 0.2s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rail-btn:hover {
+    background: #fff;
+    color: var(--color-graphite);
+    transform: translateY(-2px);
+  }
+  .rail-btn[aria-current='page'] {
+    background: #fff;
+    color: var(--color-accent);
+    border-color: var(--color-line-strong);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /*
+    El anillo que respira alrededor del botón acunado.
+
+    Cabe justo en el hueco de 8px que deja el mordisco, así que puede crecer
+    sin tapar nada de la tarjeta. Es la única animación en bucle del hero
+    aparte del campo de señal, y está ahí porque este botón es la única acción
+    de la tarjeta: el resto es lectura. Solo lo llevan los botones que de
+    verdad enlazan a algún sitio (`a.notch-btn`); el de la tarjeta de la
+    derecha es decorativo y se queda quieto.
+
+    La regla global de `prefers-reduced-motion` lo apaga junto con todo lo
+    demás, así que no hace falta repetir la consulta aquí.
+  */
+  a.notch-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    opacity: 0;
+    pointer-events: none;
+    animation: respira-anillo 3.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  /* Al pasar el cursor el anillo estorba: la atención ya está puesta. */
+  a.notch-btn:hover::after { animation-play-state: paused; }
+
+  .notch-btn:hover { transform: scale(1.06); }
+  .notch-btn .flecha { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .notch-btn:hover .flecha { transform: translate(2px, -2px); }
+
+  @keyframes respira-anillo {
+    0%   { transform: scale(1);    opacity: 0.5; }
+    70%  { transform: scale(1.42); opacity: 0; }
+    100% { transform: scale(1.42); opacity: 0; }
+  }
+
+  /*
+    Desfile continuo de marcas.
+
+    La pista lleva el listado DUPLICADO y se desplaza exactamente media
+    anchura: al llegar, la segunda copia está justo donde empezó la primera,
+    así que el salto de vuelta al origen es invisible y el bucle no tiene
+    costura.
+
+    No se detiene por nada: no hay regla de `:hover`, no depende del scroll ni
+    de JavaScript. Es una animación CSS, así que la mantiene el compositor
+    aunque el hilo principal esté ocupado.
+
+    La única excepción es `prefers-reduced-motion`, y no es una interacción
+    sino una preferencia del sistema: hay gente a la que el movimiento
+    continuo le provoca mareo. Ahí la pista se queda quieta y la franja se
+    puede recorrer con el dedo.
+  */
+  .desfile-pista {
+    display: flex;
+    width: max-content;
+    animation: desfile 38s linear infinite;
+  }
+
+  @keyframes desfile {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desfile-pista {
+      animation: none !important;
+      transform: none !important;
+    }
+    .desfile-marco {
+      overflow-x: auto;
+    }
+  }
+
+  /*
+    Entrada escalonada del hero, en CSS y no en JavaScript.
+
+    Es el mismo razonamiento que ya rige el menú de móvil: una animación por
+    `requestAnimationFrame` que no llega a ejecutarse deja los elementos en su
+    estado inicial —invisibles— y aquí ese estado inicial es el titular, la
+    promesa y los botones. El elemento más importante del sitio no puede
+    depender de que un bucle de animación arranque.
+
+    `animation-fill-mode: both` sostiene el estado final, y la regla global de
+    `prefers-reduced-motion` reduce la duración a 0.01ms, con lo que el
+    contenido aparece de golpe pero aparece. Si el navegador no puede animar,
+    se ve igual.
+  */
+  /*
+    Por defecto `.entrada` no hace nada: el contenido nace visible. La
+    animación solo se añade cuando el navegador confirma que puede animar sin
+    molestar. Así el estado por defecto es el bueno y la animación es el
+    extra, en vez de al revés — que es como el titular acababa invisible si
+    algo fallaba.
+  */
+  @media (prefers-reduced-motion: no-preference) {
+    .entrada {
+      animation: entrada 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+  }
+
+  @keyframes entrada {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Etiqueta de sección: monoespaciada. Es el detalle que da el
+     aire de producto técnico sin gritar. */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Titular de sección: una sola escala para todo el sitio. */
+  .h-section {
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.5rem);
+    line-height: 1.04;
+  }
+  .h-hero {
+    font-size: clamp(2.6rem, 1.4rem + 5.2vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  /* Línea divisoria que se desvanece: separa sin cortar. */
+  .rule-fade {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-line-strong), transparent);
+  }
+}
+
+/* ------------------------------------------------------------
+   TIPOGRAFÍA DE LECTURA — artículos del blog
+   ------------------------------------------------------------ */
+@layer components {
+  .prose-sitio {
+    color: var(--color-slate);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+
+  .prose-sitio > * + * { margin-top: 1.5rem; }
+
+  .prose-sitio h2 {
+    font-size: 2rem;
+    line-height: 1.15;
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .prose-sitio h3 {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .prose-sitio strong {
+    color: var(--color-graphite);
+    font-weight: 600;
+  }
+
+  .prose-sitio a {
+    color: var(--color-accent);
+    text-underline-offset: 3px;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+  .prose-sitio a:hover { color: var(--color-accent-soft); }
+
+  .prose-sitio ul, .prose-sitio ol { padding-left: 1.25rem; }
+  .prose-sitio ul { list-style: disc; }
+  .prose-sitio ol { list-style: decimal; }
+  .prose-sitio li { margin-top: 0.6rem; padding-left: 0.35rem; }
+  .prose-sitio li::marker { color: var(--color-accent); }
+
+  .prose-sitio code {
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    padding: 0.15em 0.4em;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--color-graphite);
+  }
+
+  .prose-sitio blockquote {
+    border-left: 2px solid var(--color-accent);
+    padding-left: 1.25rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.35;
+    color: var(--color-graphite);
+  }
+}
+
+/* ------------------------------------------------------------
+   PANEL DE ADMINISTRACIÓN — sigue siendo oscuro
+   El sitio público se pasó a claro, pero el panel es una
+   herramienta interna que se usa durante horas: el fondo oscuro
+   se conservó a propósito. Basta con devolverle a los titulares
+   y a los materiales su versión oscura dentro de `[data-tema]`.
+   ------------------------------------------------------------ */
+@layer components {
+  /*
+    El acento cambia de valor sobre fondo oscuro, no de identidad.
+    El índigo #2E2D8F está pensado para brillar sobre blanco; sobre el azul
+    casi negro del panel queda por debajo de 2:1 y desaparece. La variante
+    clara mantiene el mismo tono y sube a ~6.5:1 en ambos sentidos.
+
+    Se hace redefiniendo la variable, no reescribiendo cada clase: todo lo que
+    ya usa `text-accent` o `bg-accent` dentro de un bloque oscuro se corrige
+    solo, incluido lo que se escriba mañana.
+  */
+  [data-tema='oscuro'],
+  .tema-oscuro {
+    --color-accent: #8F8CF2;
+    --color-accent-soft: #ADAAFF;
+    --color-accent-tint: #1E2148;
+  }
+
+  /* Sobre el acento claro, el texto blanco baja a 2.7:1. El texto oscuro
+     sube a 6.5:1, así que el botón invierte su color de tinta. */
+  [data-tema='oscuro'] .btn-accent,
+  .tema-oscuro .btn-accent {
+    color: #14182F;
+    box-shadow: none;
+  }
+
+  [data-tema='oscuro'] h1,
+  [data-tema='oscuro'] h2,
+  [data-tema='oscuro'] h3,
+  .tema-oscuro h1,
+  .tema-oscuro h2,
+  .tema-oscuro h3 {
+    color: var(--color-cream);
+  }
+
+  [data-tema='oscuro'] .card {
+    border-color: rgb(244 244 241 / 0.10);
+    background: var(--color-ink-soft);
+    box-shadow: none;
+  }
+
+  [data-tema='oscuro'] .glass {
+    border-color: rgb(255 255 255 / 0.12);
+    background: rgb(255 255 255 / 0.06);
+    box-shadow: none;
+  }
+
+  [data-tema='oscuro'] .glass-pill,
+  [data-tema='oscuro'] .glass-orb {
+    border-color: rgb(255 255 255 / 0.16);
+    background: rgb(255 255 255 / 0.08);
+    box-shadow: none;
+  }
+}
+
+/* El blur pesado destruye el frame-rate en GPUs móviles. */
+@media (max-width: 640px) {
+  .glass, .glass-dark {
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  }
+  .aura { filter: blur(52px); }
+}
+
+
+/* ------------------------------------------------------------
+   Opacidad de reposo del riel en la piel técnica.
+
+   Va SIN capa a propósito. La regla equivalente dentro de
+   `@layer components` no ganaba: `opacity-[0.55]` de Tailwind
+   vive en la capa de utilidades, que es posterior, y en el
+   sistema de capas el orden manda sobre la especificidad por
+   muy larga que sea la cadena de selectores. Fuera de capa, sí.
+
+   El grupo entero sigue atenuado para no estorbar, pero blanco
+   al 55% sobre grafito daba un gris sucio en vez de la pastilla
+   clara de la referencia.
+   ------------------------------------------------------------ */
+[data-tema='tech'] nav:has(> .rail-capsula) {
+  opacity: 0.85;
+}
+[data-tema='tech'] nav:has(> .rail-capsula):hover,
+[data-tema='tech'] nav:has(> .rail-capsula):focus-within {
+  opacity: 1;
+}
+
+
+/* ============================================================
+   PIEL ZEN — data-tema="zen"
+
+   Tomada de la referencia de agencia: gris perla en el hero,
+   blanco puro en el cuerpo, negro casi puro para titulares y
+   botones, y un solo acento en bronce para lo que tiene que
+   destacar. Grotesca apretada y grande, sin cursiva editorial.
+
+   Como la piel técnica, no reescribe componentes: redefine los
+   tokens semánticos. Conviven las tres pieles en esta hoja y el
+   atributo del body decide cuál manda.
+
+   Sobre el bronce: es el acento del diseño base, un cobre quemado.
+   Se deja aquí como variable única para poder cambiarlo en una
+   línea por el color de la marca de cada cliente.
+   ============================================================ */
+[data-tema='zen'] {
+  --color-canvas: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F3F3F2;
+  --color-surface-3: #E7E8E9;
+
+  --color-graphite: #0E0F11;
+  --color-slate: #55585E;
+  --color-ink-muted: #6E7177;
+
+  --color-line: #E6E7E8;
+  --color-line-strong: #D2D4D7;
+
+  --color-accent: #9A4A1F;
+  --color-accent-soft: #B8652A;
+  --color-accent-tint: #F6ECE5;
+
+  --zen-perla: #D9DBDE;
+  --zen-bronce-a: #C9793D;
+  --zen-bronce-b: #7A3A18;
+
+  --shadow-soft: 0 1px 2px rgb(14 15 17 / 0.05), 0 8px 24px -12px rgb(14 15 17 / 0.12);
+  --shadow-lift: 0 1px 2px rgb(14 15 17 / 0.06), 0 24px 60px -28px rgb(14 15 17 / 0.25);
+}
+
+@layer components {
+  [data-tema='zen'] .fondo-tech { display: none; }
+
+  /* Titulares: grotesca negra, apretada, sin serif. */
+  [data-tema='zen'] h1,
+  [data-tema='zen'] h2,
+  [data-tema='zen'] h3 {
+    font-weight: 500;
+    letter-spacing: -0.045em;
+  }
+  [data-tema='zen'] h1 em,
+  [data-tema='zen'] h2 em,
+  [data-tema='zen'] h3 em {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    /* Gris de la referencia oscurecido hasta 3.7:1 sobre el perla del hero:
+       el tono original daba 1.9:1 y es media frase del mensaje principal. */
+    color: #6E7177;
+  }
+
+  /* Botón principal: píldora negra con el disco blanco de la flecha. */
+  [data-tema='zen'] .btn-accent {
+    background: #0E0F11;
+    color: #FFFFFF;
+    box-shadow: 0 10px 24px -12px rgb(14 15 17 / 0.6);
+  }
+  [data-tema='zen'] .btn-accent:hover { background: #26282C; }
+
+  /* Botón principal de todo el sitio: píldora negra, siempre en un renglón,
+     con el disco blanco de la flecha a la derecha.
+
+     Al pasar el cursor el disco cruza al otro extremo girando 45° —la flecha
+     ↗ termina apuntando →— y el texto se desplaza en sentido contrario para
+     dejarle sitio. El disco va en absoluto y el hueco lo reserva el padding,
+     por eso el ancho del botón no cambia durante el cruce. */
+  .pill-negra {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    border-radius: 999px;
+    background: #0E0F11;
+    color: #FFFFFF;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0.25rem 3.5rem 0.25rem 1.5rem;
+    transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+  }
+  .pill-negra:hover,
+  .pill-negra:focus-visible {
+    background: #26282C;
+    padding-left: 3.5rem;
+    padding-right: 1.5rem;
+  }
+  .pill-negra .disco {
+    position: absolute;
+    top: 50%;
+    right: 0.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: #FFFFFF;
+    color: #0E0F11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .pill-negra:hover .disco,
+  .pill-negra:focus-visible .disco {
+    right: calc(100% - 2.75rem);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .pill-negra:disabled { opacity: 0.6; pointer-events: none; }
+  /* Sobre fondo oscuro se invierte: píldora blanca, disco negro. */
+  .tema-oscuro .pill-negra { background: #FFFFFF; color: #0E0F11; }
+  .tema-oscuro .pill-negra:hover { background: #ECEDEE; }
+  .tema-oscuro .pill-negra .disco { background: #0E0F11; color: #FFFFFF; }
+  @media (prefers-reduced-motion: reduce) {
+    .pill-negra, .pill-negra .disco { transition: background-color 0.2s; }
+  }
+
+  .pill-gris {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: rgb(14 15 17 / 0.08);
+    color: #0E0F11;
+    font-weight: 500;
+    padding: 0.8rem 1.4rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background-color 0.2s;
+  }
+  .pill-gris:hover { background: rgb(14 15 17 / 0.14); }
+
+  /* Palabra gigante de fondo, desvanecida de abajo arriba. */
+  .marca-agua {
+    font-weight: 600;
+    letter-spacing: -0.06em;
+    line-height: 0.8;
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0.95) 0%, rgb(255 255 255 / 0.35) 55%, rgb(14 15 17 / 0.18) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* Vidrio claro del hero zen: gris translúcido, no blanco. */
+  .vidrio-zen {
+    background: rgb(255 255 255 / 0.35);
+    border: 1px solid rgb(255 255 255 / 0.55);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .etiqueta-zen {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    background: #F1F1F0;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.75rem;
+    color: #0E0F11;
+  }
+  .etiqueta-zen::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: #0E0F11;
+  }
+
+  /* Píldoras de la fila "We / Create / → / Future". */
+  .capsula-zen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    height: clamp(4.5rem, 3rem + 5vw, 7.5rem);
+    font-size: clamp(1.4rem, 0.9rem + 2vw, 2.4rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+  .capsula-bronce {
+    background: linear-gradient(120deg, var(--zen-bronce-a) 0%, var(--zen-bronce-b) 100%);
+    color: #F7C79A;
+  }
+}
+
+
+/* ------------------------------------------------------------
+   Lenis — las reglas mínimas que pide la librería.
+   Sin `height: auto` el documento puede quedarse con la altura
+   de la ventana y cortar el scroll; sin `overscroll-behavior` los
+   paneles con scroll propio arrastran la página entera.
+   ------------------------------------------------------------ */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+
+/* ------------------------------------------------------------
+   Paisaje del hero: movimiento ambiental.
+
+   Van en elementos interiores; la capa exterior la mueve GSAP con
+   el scroll. Cada plano deriva a un ritmo distinto —el lejano
+   despacio, el cercano algo más rápido—, que es la misma lógica de
+   profundidad del parallax pero en horizontal y sin scroll.
+   La regla global de movimiento reducido las detiene.
+   ------------------------------------------------------------ */
+@keyframes deriva {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-3%); }
+}
+@keyframes respira-halo {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.12); opacity: 0.8; }
+}
+.deriva-lenta { animation: deriva 38s ease-in-out infinite; }
+.deriva-media { animation: deriva 26s ease-in-out infinite reverse; }
+.deriva-rapida { animation: deriva 18s ease-in-out infinite; }
+.halo-bronce {
+  border-radius: 999px;
+  background: radial-gradient(circle, rgb(201 121 61 / 0.55) 0%, rgb(201 121 61 / 0.18) 38%, transparent 70%);
+  filter: blur(8px);
+  animation: respira-halo 9s ease-in-out infinite;
+}
+
+
+/* La palabra del hero, más presente: detrás de las montañas tiene que
+   leerse con claridad para que se note cuando la cubren. */
+.marca-agua-solida {
+  background: linear-gradient(to bottom, #FFFFFF 0%, #F7F7F8 45%, rgb(255 255 255 / 0.55) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 12px 30px rgb(14 15 17 / 0.10));
+}
+
+
+/* Cápsulas de la escena del problema: mismas que la franja de
+   presentación, pero más bajas para que la pantalla pegada quepa
+   entera con la frase y la maqueta. */
+.capsula-escena.capsula-escena {
+  height: clamp(3.25rem, 2.4rem + 3vw, 5.5rem);
+  font-size: clamp(0.8rem, 0.5rem + 1.3vw, 1.7rem);
+}
+
+
+/* ------------------------------------------------------------
+   Piel zen — restos de la paleta anterior.
+
+   Las mallas y auroras seguían con los azules y lavandas del sitio
+   de atardecer, y los bloques oscuros con el índigo claro. Ninguno
+   de esos tonos está en la paleta nueva. Se pasan a grises perla y
+   bronce sin tocar la estructura de ninguna sección.
+   ------------------------------------------------------------ */
+[data-tema='zen'] .mesh-sky,
+[data-tema='zen'] .mesh-periwinkle,
+[data-tema='zen'] .mesh-mist,
+[data-tema='zen'] .mesh-ivory {
+  background: linear-gradient(155deg, #F3F3F2 0%, #FFFFFF 100%);
+}
+[data-tema='zen'] .mesh-dusk {
+  background:
+    radial-gradient(120% 120% at 85% 10%, #F6ECE5 0%, transparent 55%),
+    linear-gradient(155deg, #F5F4F3 0%, #FFFFFF 100%);
+}
+[data-tema='zen'] .aura-sky,
+[data-tema='zen'] .aura-periwinkle {
+  background: radial-gradient(circle, #D9DBDE 0%, transparent 70%);
+}
+[data-tema='zen'] .aura-warm {
+  background: radial-gradient(circle, rgb(201 121 61 / 0.35) 0%, transparent 70%);
+}
+[data-tema='zen'] .tema-oscuro {
+  --color-accent: #E3A06A;
+  --color-accent-soft: #F0B888;
+}
+/* Los bloques oscuros (cierre "Empieza hoy" y el interior del panel) venían
+   en el azul noche de la paleta anterior. En zen el oscuro es el mismo negro
+   de titulares y botones, y los grises de texto pierden el tinte azul. */
+[data-tema='zen'] {
+  --color-void: #0E0F11;
+  --color-ink: #16171A;
+  --color-ink-soft: #202226;
+  --color-cream: #F4F4F5;
+  --color-cream-muted: #A3A6AB;
+}
+
+
+/* ------------------------------------------------------------
+   Piel zen — rótulos de capítulo y destacados unificados.  (zen-capitulos)
+
+   Las secciones posteriores traían el lenguaje anterior: rótulo en
+   mayúsculas monoespaciadas y la parte destacada del titular en el
+   acento. El hero y el problema usan otra cosa —etiqueta en píldora
+   con punto y destacado en gris—, y el recorrido tiene que leerse
+   como una sola pieza. Solo cambia la apariencia: ni estructura ni
+   animaciones.
+
+   Va SIN capa: `text-accent` es una utilidad de Tailwind y en el
+   sistema de capas las utilidades ganan a los componentes.
+   ------------------------------------------------------------ */
+[data-tema='zen'] main .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  background: #F1F1F0;
+  padding: 0.3rem 0.8rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #0E0F11;
+}
+[data-tema='zen'] main .eyebrow::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #0E0F11;
+}
+/* Las etiquetas de formulario y datos también usan `.eyebrow`, pero no son
+   rótulos de capítulo: esas conservan su aspecto discreto. */
+[data-tema='zen'] main legend.eyebrow,
+[data-tema='zen'] main label.eyebrow,
+[data-tema='zen'] main li .eyebrow,
+[data-tema='zen'] main .card .eyebrow,
+[data-tema='zen'] main .tema-oscuro .eyebrow {
+  background: none;
+  padding: 0;
+  color: var(--color-ink-muted);
+}
+[data-tema='zen'] main legend.eyebrow::before,
+[data-tema='zen'] main label.eyebrow::before,
+[data-tema='zen'] main li .eyebrow::before,
+[data-tema='zen'] main .card .eyebrow::before,
+[data-tema='zen'] main .tema-oscuro .eyebrow::before {
+  display: none;
+}
+[data-tema='zen'] main h2 em.text-accent,
+[data-tema='zen'] main h3 em.text-accent {
+  color: #6E7177;
+}
+[data-tema='zen'] main .tema-oscuro h2 em.text-accent {
+  color: #B8BBC0;
+}
+
+
+/* Latido de la flecha "siguiente" en la solución, hasta la primera
+   interacción. Un anillo que se expande: indica que hay más a la derecha
+   sin mover el botón de su sitio. */
+.flecha-llamada { position: relative; }
+.flecha-llamada::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1.5px solid #0E0F11;
+  opacity: 0;
+  animation: respira-anillo 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  pointer-events: none;
+}
+
+
+/* Riel con aumento tipo dock: el tamaño lo lleva framer-motion en línea, así
+   que aquí se anula el salto hacia arriba del hover (competiría con el
+   crecimiento) y el ancho/alto fijos de .rail-btn. */
+.rail-btn.rail-dock { transform: none; }
+.rail-btn.rail-dock:hover { transform: none; }
+
+
+/* Si la página tiene cabecera con botón de menú, sobra el flotante: en móvil
+   tapaba texto y botones de todas las secciones. Las páginas sin esa
+   cabecera (404, blog, legales) lo conservan. */
+body:has([data-menu-cabecera]) .boton-menu-flotante { display: none; }
+
+
+/* Piel zen fuera de la portada: el destacado de CUALQUIER titular va en gris
+   y sin cursiva, también en las cabeceras de las páginas interiores (que
+   quedan fuera de <main>) y en los titulares que traen `italic text-accent`. */
+[data-tema='zen'] :is(h1, h2, h3) em.text-accent,
+[data-tema='zen'] :is(h1, h2, h3) em.italic {
+  color: #6E7177;
+  font-style: normal;
+}
+
+
+/* zen-interiores — botón secundario claro. `.btn-ghost-cream` nació para
+   fondos oscuros (texto crema) y en la piel clara quedaba invisible. En zen
+   toma la forma de la píldora gris de "Calcular mi proyecto". El panel de
+   administración usa otra piel y no se ve afectado. */
+[data-tema='zen'] .btn-ghost-cream {
+  background: rgb(14 15 17 / 0.08);
+  color: #0E0F11;
+  border-color: transparent;
+  white-space: nowrap;
+}
+[data-tema='zen'] .btn-ghost-cream:hover { background: rgb(14 15 17 / 0.14); color: #0E0F11; }
+
