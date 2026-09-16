@@ -5,6 +5,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 
 import { adminOnly } from '@/access/adminOnly'
 import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
+import { slugEnEspanol } from '@/utilities/slug'
 
 /** Cuenta las palabras de un texto enriquecido para estimar la lectura. */
 function contarPalabras(nodo: any): number {
@@ -204,6 +205,6 @@ export const Articulos: CollectionConfig = {
       label: 'Minutos de lectura',
       admin: { position: 'sidebar', readOnly: true, description: 'Se calcula solo al guardar.' },
     },
-    slugField({ position: 'sidebar' } as any),
+    slugField({ position: 'sidebar', slugify: slugEnEspanol } as any),
   ],
 }

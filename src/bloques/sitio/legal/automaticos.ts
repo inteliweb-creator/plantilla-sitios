@@ -22,6 +22,7 @@ export type EstadoSitio = {
   modulos: { blog?: boolean; boletin?: boolean; tienda?: boolean; recursos?: boolean } | null
   blog?: { permitirComentarios?: boolean | null } | null
   ventanas?: { salidaActiva?: boolean | null; burbujaActiva?: boolean | null } | null
+  asistente?: { activo?: boolean | null } | null
 }
 
 const hayComentarios = (e: EstadoSitio) => e.modulos?.blog !== false && e.blog?.permitirComentarios !== false
@@ -151,6 +152,8 @@ function bloque(nombre: string, e: EstadoSitio): any[] {
         [{ b: 'Envío de correos electrónicos,' }, ' para avisarnos de tu mensaje y responderte' + (boletin ? ', y para enviarte el boletín si te suscribes.' : '.')],
       ]
       if (tienda) items.push([{ b: 'Pasarela de pagos,' }, ' que procesa el cobro de tus compras.'])
+      if (e.asistente?.activo)
+        items.push([{ b: 'Asistente de inteligencia artificial,' }, ' que nos ayuda a leer, ordenar y redactar respuestas a los mensajes y comentarios que recibimos. No toma decisiones por sí solo: una persona revisa todo antes de publicarlo o enviarlo.'])
       if (h.length) items.push([{ b: 'Herramientas de medición:' }, ` ${h.map((x) => `${x.nombre} (${x.empresa})`).join(', ')}` + (conPermiso(e.medicion) ? ', solo si las aceptas.' : '.')])
       items.push([{ b: 'Servicio de tipografías,' }, ' que recibe la petición técnica necesaria para mostrar las letras del sitio.'])
       return [lista(items)]
@@ -201,5 +204,6 @@ export function huellaLegal(estado: EstadoSitio) {
     c: hayComentarios(estado),
     r: hayRecursos(estado),
     v: hayVentanas(estado),
+    a: Boolean(estado.asistente?.activo),
   })
 }

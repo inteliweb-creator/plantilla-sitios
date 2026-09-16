@@ -14,18 +14,14 @@ export const redirects: NextConfig['redirects'] = async () => {
     source: '/:path((?!ie-incompatible.html$).*)', // all pages except the incompatibility page
   }
 
-  // Direcciones del sitio anterior (Astro) que ya no existen: se llevan a su
-  // equivalente para no perder visitas ni lo ganado en Google.
+  // Direcciones del sitio anterior del cliente que ya no existen: llévalas a su
+  // equivalente con redirección permanente para no perder visitas ni lo ganado en Google.
+  // Ej: { source: '/servicios.html', destination: '/diseno-web', permanent: true },
   const sitioAnterior = [
     { source: '/index.html', destination: '/', permanent: true },
-    { source: '/oferta', destination: '/', permanent: true },
+    { source: '/index.php', destination: '/', permanent: true },
     { source: '/sitemap-index.xml', destination: '/sitemap.xml', permanent: true },
-    { source: '/sitemap-0.xml', destination: '/sitemap.xml', permanent: true },
-    { source: '/0716253443/:ruta*', destination: '/admin', permanent: true },
-    // Los productos gratuitos del sitio anterior ahora son recursos.
-    { source: '/productos', destination: '/recursos', permanent: true },
-    { source: '/productos/:ruta*', destination: '/recursos', permanent: true },
-    { source: '/pago/:ruta*', destination: '/', permanent: false },
+    { source: '/sitemap_index.xml', destination: '/sitemap.xml', permanent: true },
   ]
 
   return [internetExplorerRedirect, ...sitioAnterior]

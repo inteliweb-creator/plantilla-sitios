@@ -5,6 +5,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { adminOnly } from '@/access/adminOnly'
 import { adminOnlyFieldAccess } from '@/access/adminOnlyFieldAccess'
 import { checkRole } from '@/access/utilities'
+import { slugEnEspanol } from '@/utilities/slug'
 
 const leer: Access = ({ req: { user } }) => (user && checkRole(['admin'], user as any) ? true : { publicado: { equals: true } })
 
@@ -116,6 +117,6 @@ export const Recursos: CollectionConfig = {
     },
     { name: 'publicado', type: 'checkbox', label: 'Publicado', defaultValue: true, admin: { position: 'sidebar' } },
     { name: 'descargas', type: 'number', label: 'Descargas', defaultValue: 0, admin: { position: 'sidebar', readOnly: true } },
-    slugField({ position: 'sidebar', useAsSlug: 'titulo' } as any),
+    slugField({ position: 'sidebar', useAsSlug: 'titulo', slugify: slugEnEspanol } as any),
   ],
 }

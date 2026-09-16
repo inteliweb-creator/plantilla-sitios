@@ -47,6 +47,6 @@ export default async function RecursosPage() {
 
 export const metadata: Metadata = {
   title: 'Recursos gratis',
-  description: 'Guías y plantillas que puedes descargar sin costo.',
+  description: 'Guías y plantillas gratis y prácticas para que más clientes encuentren tu negocio. Descárgalas sin costo y aplícalas hoy mismo.',
   alternates: { canonical: '/recursos' },
 }

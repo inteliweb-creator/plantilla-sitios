@@ -19,6 +19,7 @@ import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
 import { adminOnlyFieldAccess } from '@/access/adminOnlyFieldAccess'
 import { customerOnlyFieldAccess } from '@/access/customerOnlyFieldAccess'
 import { isAdmin } from '@/access/isAdmin'
+import { completarConIA } from '@/asistente/completar/plugin'
 import { isDocumentOwner } from '@/access/isDocumentOwner'
 
 const generateTitle: GenerateTitle<Product | Page> = ({ doc }) => {
@@ -172,4 +173,6 @@ export const plugins: Plugin[] = [
   // Al final: actúan también sobre lo que añaden los plugins de arriba.
   modulosPlugin,
   traduccionesPanel,
+  // Botón "✨ Completar con el asistente" en los campos de texto donde ayuda redactar.
+  completarConIA,
 ]

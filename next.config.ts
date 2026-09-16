@@ -46,11 +46,19 @@ const nextConfig: NextConfig = {
         { key: 'X-Content-Type-Options', value: 'nosniff' },
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' },
         { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
       ],
     },
-    { source: '/admin/:ruta*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
+    // Sin cámara, micrófono ni ubicación en el sitio público. En el panel se permite el micrófono
+    // (solo para este dominio) para dictarle al asistente.
+    { source: '/((?!admin).*)', headers: [{ key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' }] },
+    {
+      source: '/admin/:ruta*',
+      headers: [
+        { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(self), geolocation=(), interest-cohort=()' },
+      ],
+    },
     { source: '/next/:ruta*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
   ],
   webpack: (webpackConfig) => {

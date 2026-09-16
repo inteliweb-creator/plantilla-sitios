@@ -1,5 +1,8 @@
 import React from 'react'
 
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
+
 import { modulosActivos } from '@/modulos'
 
 import './index.scss'
@@ -14,6 +17,7 @@ type Acceso = { titulo: string; texto: string; enlace: string; externo?: boolean
  */
 export const BeforeDashboard = async () => {
   const m = await modulosActivos()
+  const asistente: any = await (await getPayload({ config: configPromise })).findGlobal({ slug: 'asistente', depth: 0, overrideAccess: true }).catch(() => null)
 
   const grupos: { titulo: string; accesos: Acceso[] }[] = [
     {
@@ -59,6 +63,9 @@ export const BeforeDashboard = async () => {
     {
       titulo: 'Configuración',
       accesos: [
+        ...(asistente?.activo
+          ? [{ titulo: `Asistente ${asistente.nombre || ''}`.trim(), texto: 'También en la burbuja de abajo a la derecha. Escríbele o díctale.', enlace: '/admin/asistente' }]
+          : []),
         { titulo: 'Revisión del sitio', texto: 'Comprueba correos, imágenes y conexiones.', enlace: '/admin/revision' },
         { titulo: 'Cambiar mi contraseña', texto: 'Pulsa "Cambiar contraseña"; te pedirá la actual.', enlace: '/admin/account' },
         { titulo: 'Datos del negocio', texto: 'Nombre, logo, WhatsApp, dirección.', enlace: '/admin/globals/tienda' },

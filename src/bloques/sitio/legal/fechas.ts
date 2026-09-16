@@ -2,14 +2,14 @@ import type { PayloadRequest } from 'payload'
 
 import { huellaLegal, type EstadoSitio } from './automaticos'
 
-type Pantallas = { medicion?: any; modulos?: any; blog?: any; ventanas?: any }
+type Pantallas = { medicion?: any; modulos?: any; blog?: any; ventanas?: any; asistente?: any }
 
 /** Estado del sitio que describen los documentos legales, leyendo las pantallas que falten. */
 export async function leerEstado(req: PayloadRequest, dadas: Pantallas = {}): Promise<EstadoSitio> {
-  const leer = (slug: 'medicion' | 'modulos' | 'blog' | 'ventanas') =>
-    slug in dadas ? Promise.resolve((dadas as any)[slug]) : req.payload.findGlobal({ slug, depth: 0, req }).catch(() => null)
-  const [medicion, modulos, blog, ventanas] = await Promise.all([leer('medicion'), leer('modulos'), leer('blog'), leer('ventanas')])
-  return { medicion, modulos, blog, ventanas }
+  const leer = (slug: 'medicion' | 'modulos' | 'blog' | 'ventanas' | 'asistente') =>
+    slug in dadas ? Promise.resolve((dadas as any)[slug]) : req.payload.findGlobal({ slug, depth: 0, req, overrideAccess: true }).catch(() => null)
+  const [medicion, modulos, blog, ventanas, asistente] = await Promise.all([leer('medicion'), leer('modulos'), leer('blog'), leer('ventanas'), leer('asistente')])
+  return { medicion, modulos, blog, ventanas, asistente: asistente ? { activo: Boolean(asistente.activo) } : null }
 }
 
 /**

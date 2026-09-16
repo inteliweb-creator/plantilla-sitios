@@ -39,6 +39,9 @@ import { Recursos } from '@/collections/Recursos'
 import { SolicitudesRecurso } from '@/collections/SolicitudesRecurso'
 import { Ventanas } from '@/globals/Ventanas'
 import { Tienda } from '@/globals/Tienda'
+import { Asistente } from '@/globals/Asistente'
+import { RegistroAsistente } from '@/collections/RegistroAsistente'
+import { ConversacionesAsistente } from '@/collections/ConversacionesAsistente'
 import { plugins } from './plugins'
 import { correoPayload } from '@/correo/adaptador'
 import sharp from 'sharp'
@@ -64,6 +67,10 @@ export default buildConfig({
           Component: '@/components/Revision#default',
           path: '/revision',
         },
+        asistente: {
+          Component: '@/asistente/admin/Vista#default',
+          path: '/asistente',
+        },
       },
       // Logo e ícono del panel: los del negocio, o unos neutros si aún no hay.
       graphics: {
@@ -76,10 +83,12 @@ export default buildConfig({
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard', '@/components/Estadisticas#Estadisticas'],
+      // Asistente de IA (opcional): burbuja en todas las pantallas del panel.
+      providers: ['@/asistente/admin/ProveedorIWe#ProveedorIWe'],
     },
     user: Users.slug,
   },
-  collections: [Pages, Articulos, Comentarios, Recursos, SolicitudesRecurso, Casos, Preguntas, Legales, Mensajes, Suscriptores, Boletines, Media, Categories, Users, Visitas, RegistroCorreos],
+  collections: [Pages, Articulos, Comentarios, Recursos, SolicitudesRecurso, Casos, Preguntas, Legales, Mensajes, Suscriptores, Boletines, Media, Categories, Users, Visitas, RegistroCorreos, RegistroAsistente, ConversacionesAsistente],
   // En local, un archivo SQLite; en producción, Turso (misma base, en la nube).
   // Acepta los nombres que crea la integración de Turso en Vercel.
   db: sqliteAdapter({
@@ -126,7 +135,7 @@ export default buildConfig({
   }),
   email: correoPayload(),
   endpoints: [],
-  globals: [Tienda, Navegacion, Avisos, Medicion, Ventanas, Modulos, Blog, TiendaTextos],
+  globals: [Tienda, Navegacion, Avisos, Medicion, Ventanas, Modulos, Blog, TiendaTextos, Asistente],
   // Panel en español para el cliente.
   i18n: {
     supportedLanguages: { es },

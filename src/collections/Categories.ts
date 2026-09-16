@@ -2,6 +2,7 @@ import { slugField } from 'payload'
 import type { CollectionConfig } from 'payload'
 
 import { adminOnly } from '@/access/adminOnly'
+import { slugEnEspanol } from '@/utilities/slug'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
@@ -25,6 +26,7 @@ export const Categories: CollectionConfig = {
     },
     slugField({
       position: undefined,
+      slugify: slugEnEspanol,
     }),
   ],
 }

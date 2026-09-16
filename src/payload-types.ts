@@ -88,6 +88,8 @@ export interface Config {
     users: User;
     visitas: Visita;
     registroCorreos: RegistroCorreo;
+    registroAsistente: RegistroAsistente;
+    conversacionesAsistente: ConversacionesAsistente;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -134,6 +136,8 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     visitas: VisitasSelect<false> | VisitasSelect<true>;
     registroCorreos: RegistroCorreosSelect<false> | RegistroCorreosSelect<true>;
+    registroAsistente: RegistroAsistenteSelect<false> | RegistroAsistenteSelect<true>;
+    conversacionesAsistente: ConversacionesAsistenteSelect<false> | ConversacionesAsistenteSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -163,6 +167,7 @@ export interface Config {
     modulos: Modulo;
     blog: Blog;
     tiendaTextos: TiendaTexto;
+    asistente: Asistente;
   };
   globalsSelect: {
     tienda: TiendaSelect<false> | TiendaSelect<true>;
@@ -173,6 +178,7 @@ export interface Config {
     modulos: ModulosSelect<false> | ModulosSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
     tiendaTextos: TiendaTextosSelect<false> | TiendaTextosSelect<true>;
+    asistente: AsistenteSelect<false> | AsistenteSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2092,6 +2098,55 @@ export interface RegistroCorreo {
   createdAt: string;
 }
 /**
+ * Historial de lo que hizo o propuso el asistente de IA.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "registroAsistente".
+ */
+export interface RegistroAsistente {
+  id: number;
+  detalle?: string | null;
+  estado?: ('ejecutada' | 'propuesta' | 'cancelada' | 'fallida') | null;
+  herramienta?: string | null;
+  datos?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  resultado?: string | null;
+  usuario?: (number | null) | User;
+  aprobadoPor?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conversacionesAsistente".
+ */
+export interface ConversacionesAsistente {
+  id: number;
+  titulo?: string | null;
+  usuario?: (number | null) | User;
+  mensajes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  estado?: ('lista' | 'trabajando') | null;
+  progreso?: string | null;
+  trabajandoDesde?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
@@ -2287,6 +2342,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'registroCorreos';
         value: number | RegistroCorreo;
+      } | null)
+    | ({
+        relationTo: 'registroAsistente';
+        value: number | RegistroAsistente;
+      } | null)
+    | ({
+        relationTo: 'conversacionesAsistente';
+        value: number | ConversacionesAsistente;
       } | null)
     | ({
         relationTo: 'forms';
@@ -3442,6 +3505,35 @@ export interface RegistroCorreosSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "registroAsistente_select".
+ */
+export interface RegistroAsistenteSelect<T extends boolean = true> {
+  detalle?: T;
+  estado?: T;
+  herramienta?: T;
+  datos?: T;
+  resultado?: T;
+  usuario?: T;
+  aprobadoPor?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conversacionesAsistente_select".
+ */
+export interface ConversacionesAsistenteSelect<T extends boolean = true> {
+  titulo?: T;
+  usuario?: T;
+  mensajes?: T;
+  estado?: T;
+  progreso?: T;
+  trabajandoDesde?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms_select".
  */
 export interface FormsSelect<T extends boolean = true> {
@@ -4276,6 +4368,65 @@ export interface TiendaTexto {
   createdAt?: string | null;
 }
 /**
+ * Agrega una o varias conexiones (proveedor + clave) en orden de prioridad y pruébalas. Si una falla, el asistente pasa sola a la siguiente. Se abre con la burbuja de la esquina inferior derecha. Todo lo que publica o envía pide tu aprobación.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "asistente".
+ */
+export interface Asistente {
+  id: number;
+  activo?: boolean | null;
+  /**
+   * Así aparece en la burbuja del panel.
+   */
+  nombre?: string | null;
+  /**
+   * La primera es la principal; las demás son de respaldo. Arrastra para cambiar el orden. Si una se queda sin saldo, está saturada o su clave deja de servir, el asistente usa la siguiente sin que tengas que hacer nada.
+   */
+  conexiones?:
+    | {
+        proveedor: 'deepseek' | 'gemini' | 'openai' | 'anthropic' | 'personalizado';
+        /**
+         * Vacío = el recomendado. DeepSeek: deepseek-flash, deepseek-v4-pro · Google Gemini: gemini-3.8-flash, gemini-3.5-flash-lite, gemini-2.5-pro · OpenAI: gpt-5.6-luna, gpt-5.6-terra · Anthropic (Claude): claude-sonnet-5, claude-haiku-4-5
+         */
+        modelo?: string | null;
+        activa?: boolean | null;
+        /**
+         * Solo para proveedores compatibles con el formato de OpenAI.
+         */
+        urlBase?: string | null;
+        /**
+         * Se guarda cifrada. Déjalo vacío para conservar la que ya está.
+         */
+        claveNueva?: string | null;
+        claveResumen?: string | null;
+        borrarClave?: boolean | null;
+        claveCifrada?: string | null;
+        ultimoError?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Todo lo que el asistente debe saber del negocio: quiénes son, servicios, qué los hace distintos, a quién le hablan, tono, palabras que prefieren o evitan y llamados a la acción. Lo tiene presente en cada respuesta.
+   */
+  instrucciones?: string | null;
+  investigar?: boolean | null;
+  videos?: boolean | null;
+  imagenes?: boolean | null;
+  /**
+   * Investigar y ver videos necesitan una conexión de Google Gemini en la lista (aunque la principal sea otra, como DeepSeek). Crear imágenes necesita Gemini u OpenAI y puede requerir activar la facturación. Vacío = el que tenga disponible tu cuenta.
+   */
+  modeloImagen?: string | null;
+  /**
+   * Protege tu gasto: al llegar al límite, el asistente se pausa hasta el mes siguiente. 0 = sin límite.
+   */
+  limiteTokensMes?: number | null;
+  tokensMes?: number | null;
+  usoMes?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tienda_select".
  */
@@ -4514,6 +4665,39 @@ export interface TiendaTextosSelect<T extends boolean = true> {
   pagoTitulo?: T;
   pagoEnfasis?: T;
   pagoLead?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "asistente_select".
+ */
+export interface AsistenteSelect<T extends boolean = true> {
+  activo?: T;
+  nombre?: T;
+  conexiones?:
+    | T
+    | {
+        proveedor?: T;
+        modelo?: T;
+        activa?: T;
+        urlBase?: T;
+        claveNueva?: T;
+        claveResumen?: T;
+        borrarClave?: T;
+        claveCifrada?: T;
+        ultimoError?: T;
+        id?: T;
+      };
+  instrucciones?: T;
+  investigar?: T;
+  videos?: T;
+  imagenes?: T;
+  modeloImagen?: T;
+  limiteTokensMes?: T;
+  tokensMes?: T;
+  usoMes?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

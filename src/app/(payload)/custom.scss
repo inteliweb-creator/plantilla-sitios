@@ -8,3 +8,47 @@
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+// ---------- "✨ Completar con el asistente" debajo de los campos de texto
+.iwe-completar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+
+  button {
+    font: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 3px 10px;
+    line-height: 1.5;
+  }
+
+  &__boton {
+    border: 1px solid rgba(154, 74, 31, 0.45);
+    background: rgba(154, 74, 31, 0.06);
+    color: #7a3a18;
+
+    &:hover:not(:disabled) {
+      background: rgba(154, 74, 31, 0.14);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: progress;
+    }
+  }
+
+  &__deshacer {
+    border: 1px solid var(--theme-elevation-150);
+    background: transparent;
+    color: var(--theme-elevation-700);
+  }
+
+  &__error {
+    font-size: 12.5px;
+    color: var(--theme-error-700);
+  }
+}

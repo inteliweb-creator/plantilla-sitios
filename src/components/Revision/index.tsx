@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import React from 'react'
 
 import { checkRole } from '@/access/utilities'
+import { descifrar } from '@/asistente/cifrado'
 import { hayCorreo, enviarCorreo } from '@/correo'
 import { optimizarImagenes } from '@/scripts/optimizar-imagenes'
 
@@ -151,6 +152,23 @@ export default async function Revision({ initPageResult, params, searchParams }:
     .filter(([k, v]) => ['blog', 'boletin', 'recursos', 'tienda'].includes(k) && v !== false)
     .map(([k]) => ({ blog: 'Blog', boletin: 'Boletín', recursos: 'Recursos', tienda: 'Tienda' })[k])
   añadir('ok', 'Módulos encendidos', encendidos.join(', ') || 'Ninguno')
+
+  // Asistente de IA
+  const asistente: any = await payload.findGlobal({ slug: 'asistente', depth: 0, overrideAccess: true, showHiddenFields: true }).catch(() => null)
+  const secretoLargo = String(process.env.PAYLOAD_SECRET || '').length >= 32
+  const conexiones = (asistente?.conexiones || []).filter((f: any) => f?.activa !== false && f?.claveCifrada)
+  const legibles = conexiones.filter((f: any) => descifrar(f.claveCifrada))
+  añadir(
+    !asistente?.activo ? 'aviso' : legibles.length ? 'ok' : 'mal',
+    'Asistente IA',
+    !asistente?.activo
+      ? 'Apagado. Se configura en Configuración → Asistente IA.'
+      : !conexiones.length
+        ? 'Encendido pero sin conexiones con clave: agrégalas en Configuración → Asistente IA.'
+        : legibles.length < conexiones.length
+          ? `${conexiones.length - legibles.length} clave(s) no se pueden leer (¿cambió PAYLOAD_SECRET?). Pégalas de nuevo.`
+          : `Listo con ${legibles.length} conexión(es) · ${Number(asistente.tokensMes || 0).toLocaleString('es-CO')} tokens usados este mes${asistente.limiteTokensMes ? ` de ${Number(asistente.limiteTokensMes).toLocaleString('es-CO')}` : ''}.${secretoLargo ? '' : ' Aviso: PAYLOAD_SECRET es corto; conviene uno más largo.'}`,
+  )
 
   if (modulos?.tienda) {
     añadir(

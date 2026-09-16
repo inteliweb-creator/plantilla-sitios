@@ -1,6 +1,6 @@
 # Plantilla de sitios
 
-Base para crear sitios web de clientes con panel de administración en español. Incluye todo lo que se construyó y probó en producción: páginas por secciones, blog, boletín, recursos gratis, comentarios, tienda con Wompi, estadísticas propias, correos con la marca del cliente y documentos legales que se actualizan solos.
+Base para crear sitios web de clientes con panel de administración en español. Incluye todo lo que se construyó y probó en producción: páginas por secciones, blog, boletín, recursos gratis, comentarios, tienda con Wompi, estadísticas propias, correos con la marca del cliente, documentos legales que se actualizan solos y un asistente de inteligencia artificial opcional.
 
 **Tecnología:** Payload CMS 3 + Next.js 16, base de datos SQLite (en la nube, Turso), imágenes en Vercel Blob y correos con Resend.
 
@@ -22,7 +22,8 @@ Base para crear sitios web de clientes con panel de administración en español.
 | **Google** | Mapa del sitio, robots, datos estructurados del negocio, artículos, servicios y preguntas. |
 | **Imágenes** | Se optimizan al subirlas (WebP, varios tamaños y PNG para correos). |
 | **Seguridad** | Contraseñas de 12+ caracteres, pedir la actual al cambiarla, bloqueo por intentos, recuperación por correo. |
-| **Revisión del sitio** | Pantalla del panel que comprueba base de datos, imágenes, correos y logo, y permite enviar un correo de prueba. |
+| **Revisión del sitio** | Pantalla del panel que comprueba base de datos, imágenes, correos, logo y asistente, y permite enviar un correo de prueba. |
+| **Asistente IA (opcional)** | Burbuja en todo el panel para pedir por texto o voz: borradores de artículos y boletines, resumen del buzón, respuestas a comentarios, investigación en Google, videos de YouTube convertidos en contenido e imágenes. Botón **✨ Completar** en los campos de texto. Lo que publica o envía espera aprobación. **Viene apagado.** |
 
 ---
 
@@ -71,12 +72,46 @@ La plantilla trae un **diseño base** para cuando el cliente no tiene uno. **No 
 
 ---
 
+## Asistente de inteligencia artificial (opcional)
+
+Viene **apagado**: mientras lo esté, no aparece la burbuja ni los botones ✨. Necesita una clave de un proveedor de IA, que normalmente es **de pago** (DeepSeek es muy económico; Gemini tiene cuota gratuita pero a veces se satura).
+
+**Encenderlo:**
+
+1. *Configuración → Asistente IA → Conexiones → Añadir conexión.*
+2. Elige el proveedor, deja **Modelo** vacío, pega la clave y pulsa **Probar conexión** (si el modelo recomendado no existe en esa cuenta, elige solo uno que funcione).
+3. Recomendado: **DeepSeek como principal** (conversa y redacta) y **Google Gemini de respaldo** (además investiga en Google, ve videos de YouTube y describe o crea imágenes). Si una falla, usa la siguiente sola.
+4. Llena **Conocimiento de la marca y cómo debe escribir** con la información del cliente: quiénes son, servicios y sus direcciones, qué los hace distintos, a quién le hablan, tono, palabras a usar y evitar, llamados a la acción. Sin esto escribe genérico.
+5. Marca **Asistente encendido**, pon su **nombre** (sale en la burbuja) y un **límite de uso al mes**. Guarda.
+
+**Seguridad:** no puede borrar, tocar usuarios, claves, configuración ni código. Publicar, responder comentarios y enviar boletines quedan como propuesta con botón **Aprobar**. Lo que escriben los visitantes o llega de internet se trata como información, nunca como órdenes. Todo queda en *Registro del asistente*. Las claves se guardan cifradas con `PAYLOAD_SECRET` (si esa variable cambia, hay que volver a pegarlas).
+
+**Dictado por voz:** funciona en Chrome, Edge y Safari. El micrófono solo está permitido dentro de `/admin` (ver `next.config.ts`).
+
+---
+
+## Indexar el sitio en Google (al publicar cada cliente)
+
+Antes de pedirle a Google que lo lea:
+
+1. **Revisa que todo esté listo:** textos definitivos (nada de contenido de ejemplo), *Datos del negocio* completos, logo, legales con los datos reales y *Revisión del sitio* en verde.
+2. **Dirección única:** el dominio definitivo en `NEXT_PUBLIC_SERVER_URL` y en Vercel el dominio principal con redirección de la versión sin `www` (o al revés). Abre `/robots.txt` y `/sitemap.xml` y comprueba que usan ese dominio.
+3. **Si el cliente tenía un sitio anterior**, lista sus direcciones y agrega redirecciones permanentes en `redirects.ts` hacia la página equivalente (así no pierde lo ganado en Google).
+4. **Google Search Console** (con la cuenta de Google del cliente): *Agregar propiedad → Dominio* → copia el registro TXT → agrégalo en el DNS donde está el dominio (Vercel, GoDaddy, Hostinger…) → *Verificar*.
+5. En Search Console: *Sitemaps* → envía `sitemap.xml`. Luego *Inspección de URLs* → pega la portada y las páginas de servicio → *Solicitar indexación*.
+6. **Bing Webmaster Tools:** *Importar desde Google Search Console* (un clic; también alimenta a ChatGPT y Copilot).
+7. **Ficha de Google Business Profile:** pon la dirección del sitio y verifica que nombre, teléfono y dirección coincidan exactamente con *Datos del negocio*.
+8. Revisa Search Console a los 7 y 30 días: *Páginas* (qué se indexó y por qué no) y *Rendimiento* (búsquedas).
+
+---
+
 ## Dónde está cada cosa en el panel
 
 - **Accesos rápidos** en el inicio del panel, y debajo las estadísticas.
 - **Revisión del sitio:** `/admin/revision`.
 - **Cambiar contraseña:** tu cuenta → *Cambiar contraseña* (pide la actual).
 - **Registro de correos:** *Configuración → Registro de correos*, con el motivo exacto si algo no salió.
+- **Asistente IA:** ajustes en *Configuración → Asistente IA*; historial de acciones en *Configuración → Registro del asistente*; pantalla completa en `/admin/asistente`.
 
 ---
 

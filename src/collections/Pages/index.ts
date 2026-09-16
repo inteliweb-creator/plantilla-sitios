@@ -22,6 +22,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { revalidatePage, revalidateDelete } from './hooks/revalidatePage'
+import { slugEnEspanol } from '@/utilities/slug'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -141,7 +142,7 @@ export const Pages: CollectionConfig = {
         },
       ],
     },
-    slugField(),
+    slugField({ slugify: slugEnEspanol }),
   ],
   hooks: {
     afterChange: [revalidatePage],

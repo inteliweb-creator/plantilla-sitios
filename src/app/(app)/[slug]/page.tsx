@@ -94,7 +94,8 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     if (legal) {
       const valores = await valoresNegocio()
       return {
-        title: sustituir(legal.titulo, valores),
+        // Google corta los títulos largos: si el del documento lo es, se usa su nombre corto.
+        title: sustituir(legal.titulo?.length > 50 && legal.etiqueta ? legal.etiqueta : legal.titulo, valores),
         description: legal.descripcion ? sustituir(legal.descripcion, valores) : undefined,
         alternates: { canonical: `/${legal.slug}` },
       }

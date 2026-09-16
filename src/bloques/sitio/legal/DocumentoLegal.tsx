@@ -18,13 +18,14 @@ const fecha = (iso: string) =>
  * Aquí no hay nada que vender, solo texto que tiene que poder leerse y citarse.
  */
 export default async function DocumentoLegal({ doc }: { doc: any }) {
-  const [valores, otros, medicion, modulos, blog, ventanas] = await Promise.all([
+  const [valores, otros, medicion, modulos, blog, ventanas, asistente] = await Promise.all([
     valoresNegocio(),
     todosLosLegales(),
     getCachedGlobal('medicion', 0)(),
     getCachedGlobal('modulos', 0)(),
     getCachedGlobal('blog', 0)(),
     getCachedGlobal('ventanas' as any, 0)(),
+    getCachedGlobal('asistente' as any, 0)().catch(() => null),
   ])
   const titulo = sustituir(doc.titulo, valores)
   const sitio = getServerSideURL().replace(/\/$/, '')
@@ -51,7 +52,7 @@ export default async function DocumentoLegal({ doc }: { doc: any }) {
 
       <div className="pt-6 pb-14 sm:pt-10 sm:pb-20">
         <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8 prose-sitio">
-          <RichText data={conDatosDelNegocio(expandirBloques(doc.contenido, { medicion: medicion as any, modulos: modulos as any, blog: blog as any, ventanas: ventanas as any }), valores)} disableContainer />
+          <RichText data={conDatosDelNegocio(expandirBloques(doc.contenido, { medicion: medicion as any, modulos: modulos as any, blog: blog as any, ventanas: ventanas as any, asistente: { activo: Boolean((asistente as any)?.activo) } }), valores)} disableContainer />
         </div>
       </div>
 
