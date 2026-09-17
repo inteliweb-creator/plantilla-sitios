@@ -122,7 +122,7 @@ export async function BloqueDelSitio({ bloque }: { bloque: any }) {
       '@context': 'https://schema.org',
       '@type': 'Service',
       name: bloque.nombreServicio,
-      serviceType: bloque.eyebrow || bloque.nombreServicio,
+      serviceType: bloque.nombreServicio,
       provider: { '@id': `${(process.env.NEXT_PUBLIC_SERVER_URL || '').replace(/\/$/, '')}/#negocio`, name: negocio?.nombre },
       areaServed: zona.map((name: string) => ({ '@type': 'Place', name })),
     }

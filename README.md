@@ -92,7 +92,7 @@ Viene **apagado**: mientras lo esté, no aparece la burbuja ni los botones ✨. 
 
 ## Indexar el sitio en Google (al publicar cada cliente)
 
-Antes de pedirle a Google que lo lea:
+Antes de pedirle a Google que lo lea, haz una **auditoría SEO** con la guía `docs/prompt-auditoria-seo.md` (en Claude Code está como la skill `auditoria-seo`: basta con pedir *"haz una auditoría SEO del sitio para posicionarlo en <ciudad>"*; en otra IA, pega ese archivo como instrucciones). Luego:
 
 1. **Revisa que todo esté listo:** textos definitivos (nada de contenido de ejemplo), *Datos del negocio* completos, logo, legales con los datos reales y *Revisión del sitio* en verde.
 2. **Dirección única:** el dominio definitivo en `NEXT_PUBLIC_SERVER_URL` y en Vercel el dominio principal con redirección de la versión sin `www` (o al revés). Abre `/robots.txt` y `/sitemap.xml` y comprueba que usan ese dominio.
